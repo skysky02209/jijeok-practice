@@ -12,6 +12,7 @@ if command -v gh >/dev/null 2>&1; then
   gh repo view "$USER_NAME/$REPO" >/dev/null 2>&1 || gh repo create "$USER_NAME/$REPO" --public --description "지적기능사 실기 연습기"
   git remote get-url origin >/dev/null 2>&1 || git remote add origin "https://github.com/$USER_NAME/$REPO.git"
   git push -u origin main
+  git push -f origin main:gh-pages
   gh api -X POST "repos/$USER_NAME/$REPO/pages" -f "source[branch]=main" -f "source[path]=/" >/dev/null 2>&1 || true
 else
   if ! git ls-remote "https://github.com/$USER_NAME/$REPO.git" >/dev/null 2>&1; then
@@ -21,10 +22,10 @@ else
   fi
   git remote get-url origin >/dev/null 2>&1 || git remote add origin "https://github.com/$USER_NAME/$REPO.git"
   git push -u origin main
-  echo "3) 열리는 Pages 설정에서 Branch를 main / (root) 로 두고 [Save]를 눌러 주세요. (처음 한 번만)"
-  open "https://github.com/$USER_NAME/$REPO/settings/pages"
+  git push -f origin main:gh-pages
 fi
 echo ""
 echo "배포 주소: $URL  (처음엔 1~2분 뒤에 열립니다)"
+echo "DEPLOYED $(date)" > deploy.log
 open "$URL"
-read -n 1 -s -r -p "아무 키나 누르면 창이 닫힙니다"
+sleep 3
