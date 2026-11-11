@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>지적기능사 실기 연습기</title>
+<meta name="description" content="지적기능사 실기 01~04 문제에 답을 입력하면 채점하고 풀이와 도면을 보여 주는 연습 앱">
+<style>
+:root{
+  --bg:#f2f5f3;--card:#ffffff;--ink:#1f2a2e;--sub:#5b6669;--line:#e2ddd2;
+  --teal:#2f6f62;--teal-bg:#eef5f2;--blue-bg:#e7f1fb;--blue:#2c5d8f;
+  --green-bg:#e5f4e4;--green:#2e7d32;--red:#c8402f;--red-bg:#fbebeb;--yel-bg:#fdf1d6;--yel:#8a5a00;
+  --input:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15191b;--card:#1f2629;--ink:#e8ecec;--sub:#a3adb0;--line:#334046;
+    --teal:#5fb8a4;--teal-bg:#1d3530;--blue-bg:#1c2c3d;--blue:#8cbcf0;
+    --green-bg:#1d3320;--green:#7fd18a;--red:#ff8a78;--red-bg:#3a1f1c;--yel-bg:#3a3020;--yel:#f2c14e;
+    --input:#11171a;color-scheme:dark;
+  }
+}
+  :root[data-theme="dark"]{color-scheme:dark;
+  --bg:#15191b;--card:#1f2629;--ink:#e8ecec;--sub:#a3adb0;--line:#334046;
+  --teal:#5fb8a4;--teal-bg:#1d3530;--blue-bg:#1c2c3d;--blue:#8cbcf0;
+  --green-bg:#1d3320;--green:#7fd18a;--red:#ff8a78;--red-bg:#3a1f1c;--yel-bg:#3a3020;--yel:#f2c14e;
+  --input:#11171a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-block:16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header h1{font-size:24px;margin:8px 0 2px;letter-spacing:-.5px}
+header p{margin:0 0 14px;color:var(--sub);font-size:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+select,button,input{font:inherit;color:inherit}
+select{padding:9px 10px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);flex:1 1 220px}
+button{padding:9px 14px;border-radius:10px;border:1.5px solid var(--teal);background:var(--card);color:var(--teal);font-weight:700;cursor:pointer}
+button.pri{background:var(--teal);color:var(--card)}
+button.warn{border-color:var(--red);color:var(--red)}
+button:active{transform:translateY(1px)}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h3{font-size:15px;margin:14px 0 6px;color:var(--teal)}
+.n{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:14px;background:var(--teal);color:var(--card);font-size:14px;padding:0 6px}
+.req{margin:10px 0 6px;font-size:14.5px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--line);padding:6px 6px;text-align:center}
+th{background:var(--teal-bg)}
+.tbl{overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px 10px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f label{font-size:12.5px;color:var(--sub)}
+.f input{padding:8px 9px;border-radius:9px;border:1.5px solid var(--line);background:var(--input);width:100%;font-variant-numeric:tabular-nums}
+.f.ok input{border-color:var(--green);background:var(--green-bg)}
+.f.no input{border-color:var(--red);background:var(--red-bg)}
+.f .fb{font-size:12.5px;min-height:0}
+.f.ok .fb{color:var(--green)}
+.f.no .fb{color:var(--red)}
+.score{font-size:20px;font-weight:800;margin:4px 0 0}
+.score small{font-size:14px;font-weight:500;color:var(--sub)}
+.sol{display:none}
+.sol.show{display:block}
+.step{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+.proc{background:var(--blue-bg);border-left:4px solid var(--blue);border-radius:8px;padding:10px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+.proc div{margin:2px 0}
+.ans{background:var(--green-bg);border-left:4px solid var(--green);border-radius:8px;padding:10px 12px;font-size:14.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.note{background:var(--yel-bg);color:var(--yel);border-radius:8px;padding:9px 12px;font-size:13.5px;margin-top:8px}
+.err{background:var(--red-bg);color:var(--red);border-radius:8px;padding:10px 12px;font-weight:700}
+details summary{cursor:pointer;font-weight:700;color:var(--teal)}
+.edit .row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px}
+.edit .row input,.edit input,.edit select{padding:7px 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--input);width:100%}
+.edit .lbl{font-size:12px;color:var(--sub)}
+svg text{font-family:inherit}
+.legend{font-size:13px;color:var(--sub);margin-top:6px}
+.hint{font-size:13px;color:var(--sub);margin:4px 0 10px}
+.toolbar{position:sticky;bottom:0;background:var(--bg);padding-block:10px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;flex-wrap:wrap;border-top:1.5px solid var(--line);margin-top:10px}
+.toolbar button{flex:1 1 140px}
+@media (max-width:560px){
+  .edit .row{grid-template-columns:repeat(2,1fr)}
+  th,td{padding:5px 3px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>지적기능사 실기 연습기</h1>
+  <p>문제를 고르고 답안지(01~04)에 직접 답을 입력하면 채점하고 풀이를 보여 드립니다.</p>
+</header>
+
+<div class="bar">
+  <select id="preset" aria-label="문제 선택">
+    <option value="official">Q-net 예시문제 (원본, 1/1200)</option>
+    <option value="s1">모의 제1회 (예시문제 변형, 1/1200)</option>
+    <option value="s2">모의 제2회 (1/1200)</option>
+    <option value="s3">모의 제3회 (1/600)</option>
+    <option value="rand1200">랜덤 새 문제 (1/1200)</option>
+    <option value="rand600">랜덤 새 문제 (1/600)</option>
+  </select>
+  <button id="btnNew">새 랜덤 문제</button>
+</div>
+
+<div id="problem" class="card"></div>
+
+<details class="card edit" id="editBox">
+  <summary>문제 숫자 직접 바꾸기</summary>
+  <div id="editForm" style="margin-top:12px"></div>
+  <div style="display:flex;gap:8px;margin-top:10px"><button class="pri" id="btnApply">바꾼 숫자로 문제 만들기</button></div>
+</details>
+
+<div class="card" id="answerCard">
+  <h2>답안지 <small style="font-weight:500;color:var(--sub);font-size:13px">m는 소수 둘째 자리, ㎡는 문제 단위대로</small></h2>
+  <div id="answerForm"></div>
+  <div id="scoreBox"></div>
+</div>
+
+<div class="card sol" id="solution"></div>
+
+<div class="toolbar">
+  <button class="pri" id="btnGrade">채점하기</button>
+  <button id="btnSol">정답·풀이 보기</button>
+  <button class="warn" id="btnClear">답 지우기</button>
+</div>
+</div>
+
+<script>
+"use strict";
+/* ---------- 숫자 도우미 ---------- */
+const rnd=(v,d)=>{const p=10**d;const s=v<0?-1:1;return s*Math.round(Math.abs(v)*p+1e-7)/p;};
+const fx=(v,d)=>rnd(v,d).toFixed(d);
+const sgn=(v,d)=>(v>=0?"+":"−")+Math.abs(rnd(v,d)).toFixed(d);
+const neg=s=>String(s).replace(/^-/,"−");
+const toDeg=(d,m,s)=>(+d)+(+m)/60+(+s)/3600;
+const ang=o=>`${o.d}° ${String(o.m).padStart(2,"0")}′ ${o.s}″`;
+const FRAME={500:[150,200],600:[200,250],1000:[300,400],1200:[400,500],2400:[800,1000]};
+const UNIT=M=>M===600?0.1:1;
+const parseNum=s=>{if(s==null)return NaN;s=String(s).replace(/[,\s㎡m±]/g,"").replace(/[−–—]/g,"-");if(s==="")return NaN;return Number(s);};
+
+/* ---------- 문제 데이터 ---------- */
+const PRESETS={
+  official:{title:"Q-net 예시문제 (원본)",M:1200,X0:500000,Y0:200000,
+    refs:[["4118",453478.70,193664.65],["4119",453405.55,193726.90],["4120",453355.05,193603.80]],frame:0,st:1,
+    obs:[[88,47,"13.26",119.99],[94,37,"37.18",202.31],[120,44,"37.00",185.90],[151,23,"34.09",78.70]],
+    spl:[[80,57,"10.5",169.23],[138,47,"39.7",147.67]],F:9034,addr:"전주시 완산구 중동",lot:"1164",last:"1164-3",jimok:"대",sheet:"제10호",zone:"주거지역"},
+  s1:{title:"모의 제1회 (예시문제 변형)",M:1200,X0:500000,Y0:200000,
+    refs:[["4118",453478.70,193664.65],["4119",453405.55,193726.90],["4120",453355.05,193603.80]],frame:0,st:1,
+    obs:[[87,0,"15.09",113.85],[95,50,"54.80",207.85],[119,53,"06.04",179.23],[150,9,"45.12",83.05]],
+    spl:[[83,12,"08.1",172.61],[138,33,"18.0",141.06]],F:8944,addr:"○○시 ○○구 ○○동",lot:"2318",last:"2318-4",jimok:"대",sheet:"제7호",zone:"주거지역"},
+  s2:{title:"모의 제2회",M:1200,X0:500000,Y0:200000,
+    refs:[["5231",452837.25,192518.40],["5232",452762.10,192583.75],["5233",452710.65,192461.30]],frame:0,st:1,
+    obs:[[85,58,"13.55",104.88],[93,25,"16.75",214.65],[119,52,"51.51",203.65],[158,13,"26.72",79.28]],
+    spl:[[79,36,"24.2",163.41],[141,52,"34.0",149.60]],F:12242,addr:"○○시 ○○구 ○○동",lot:"815",last:"815-2",jimok:"대",sheet:"제3호",zone:"상업지역"},
+  s3:{title:"모의 제3회",M:600,X0:500000,Y0:200000,
+    refs:[["2207",447146.82,191372.15],["2208",447108.43,191403.66],["2209",447081.27,191341.90]],frame:0,st:1,
+    obs:[[84,53,"25.39",51.99],[95,0,"20.16",107.96],[119,32,"32.25",104.18],[158,58,"17.45",41.02]],
+    spl:[[78,40,"40.4",83.08],[141,32,"29.9",76.41]],F:3161.5,addr:"○○시 ○○구 ○○동",lot:"427",last:"427-9",jimok:"대",sheet:"제15호",zone:"주거지역"}
+};
+const toObs=a=>({d:a[0],m:a[1],s:a[2],L:a[3]});
+function normalize(p){
+  return {...p,refs:p.refs.map(r=>({name:r[0]??r.name,x:+(r[1]??r.x),y:+(r[2]??r.y)})),
+    obs:p.obs.map(o=>Array.isArray(o)?toObs(o):o),spl:p.spl.map(o=>Array.isArray(o)?toObs(o):o)};
+}
+
+/* ---------- 계산 ---------- */
+function frameCalc(v,O,len){
+  const diff=v-O,q=diff/len,t=Math.trunc(q),a=O+t*len;
+  const near=a, far=v<O?a-len:a+len;
+  return {diff,q,t,a,near,far,neg:v<O};
+}
+function shoelace(p){let s=0;for(let i=0;i<p.length;i++){const j=(i+1)%p.length,k=(i-1+p.length)%p.length;s+=p[i].x*(p[j].y-p[k].y);}return Math.abs(s)/2;}
+function centroidY(p){let A=0,cy=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];const c=a.x*b.y-b.x*a.y;A+=c;cy+=(a.y+b.y)*c;}return cy/(3*A);}
+function lineSeg(a,b,c,d){
+  const x1=a.x,y1=a.y,x2=b.x,y2=b.y,x3=c.x,y3=c.y,x4=d.x,y4=d.y;
+  const den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);if(Math.abs(den)<1e-12)return null;
+  const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/den;
+  const u=-((x1-x2)*(y1-y3)-(y1-y2)*(x1-x3))/den;
+  if(u<-1e-9||u>1+1e-9)return null;
+  return {x:x1+t*(x2-x1),y:y1+t*(y2-y1)};
+}
+function observe(st,o){
+  const t=toDeg(o.d,o.m,o.s),L=+o.L,c=Math.cos(t*Math.PI/180),s=Math.sin(t*Math.PI/180);
+  const dx=L*c,dy=L*s,dxr=rnd(dx,2),dyr=rnd(dy,2);
+  return {t,L,c,s,dx,dy,dxr,dyr,x:rnd(st.x+dxr,2),y:rnd(st.y+dyr,2)};
+}
+function decide(rs,F,u){
+  // 분할 결정면적: 끝자리 다음 숫자가 큰 것부터 순차로 올림, 같으면 산출면적 큰 것
+  const step=Math.round(1/u);
+  const items=rs.map((r,i)=>{const r2=rnd(r,2);const scaled=Math.round(r2*100);const per=Math.round(100/step);
+    const base=Math.floor(scaled/per);const nextDigit=Math.floor((scaled%per)/(per/10));return {i,r:r2,base,nextDigit};});
+  const target=Math.round(F*step);
+  let k=target-items.reduce((s,a)=>s+a.base,0);
+  const order=[...items].sort((a,b)=>b.nextDigit-a.nextDigit||b.r-a.r);
+  const res=items.map(a=>a.base);
+  const up=new Set();
+  for(let j=0;j<order.length&&k>0;j++,k--){res[order[j].i]++;up.add(order[j].i);}
+  return {vals:res.map(v=>v/step),items,up};
+}
+function solve(p){
+  const out={ok:true,msg:""};
+  const [H,W]=FRAME[p.M];out.H=H;out.W=W;
+  const fr=p.refs[p.frame],st=p.refs[p.st];out.fr=fr;out.st=st;
+  out.fX=frameCalc(fr.x,p.X0,H);out.fY=frameCalc(fr.y,p.Y0,W);
+  out.top=out.fX.neg?out.fX.near:out.fX.far;out.bot=out.fX.neg?out.fX.far:out.fX.near;
+  out.right=out.fY.neg?out.fY.near:out.fY.far;out.left=out.fY.neg?out.fY.far:out.fY.near;
+  out.pts=p.obs.map(o=>observe(st,o));
+  out.sp=p.spl.map(o=>observe(st,o));
+  const n=out.pts.length,ints=[];
+  for(let i=0;i<n;i++){const r=lineSeg(out.sp[0],out.sp[1],out.pts[i],out.pts[(i+1)%n]);
+    if(r){const q={x:rnd(r.x,2),y:rnd(r.y,2),edge:i};if(!ints.some(z=>Math.abs(z.x-q.x)<0.005&&Math.abs(z.y-q.y)<0.005))ints.push(q);}}
+  if(ints.length!==2){out.ok=false;out.msg="분할선이 필지 경계와 두 점에서 만나지 않습니다. 분1·분2 관측값을 확인해 주세요.";return out;}
+  out.ints=ints;
+  const [I1,I2]=ints,pts=out.pts;
+  const A=[I1];for(let k=I1.edge+1;k<=I2.edge;k++)A.push({...pts[k],lab:String(k+1)});A.push(I2);
+  const B=[I2];for(let k=I2.edge+1;k<=I1.edge+n;k++)B.push({...pts[k%n],lab:String(k%n+1)});B.push(I1);
+  const leftIsA=centroidY(A)<centroidY(B);
+  const left=leftIsA?A:B,right=leftIsA?B:A;
+  const origPoly=p.side==="right"?right:left,newPoly=p.side==="right"?left:right;
+  out.origPoly=origPoly;out.newPoly=newPoly;
+  out.aO=rnd(shoelace(origPoly),1);out.aN=rnd(shoelace(newPoly),1);
+  out.S=rnd(out.aO+out.aN,1);out.F=+p.F;
+  out.err=rnd(out.F-out.S,1);
+  out.tol=0.026*0.026*p.M*Math.sqrt(out.F);out.tolR=rnd(out.tol,1);
+  out.pass=Math.abs(out.err)<=out.tol;
+  out.rO=out.aO*out.F/out.S;out.rN=out.aN*out.F/out.S;
+  const u=UNIT(p.M);out.u=u;
+  out.dec=decide([out.rO,out.rN],out.F,u);
+  out.dO=out.dec.vals[0];out.dN=out.dec.vals[1];
+  const lastNum=parseInt(String(p.last).split("-")[1]||"0",10);
+  out.newLot=`${p.lot}-${lastNum+1}`;
+  return out;
+}
+
+/* ---------- 랜덤 문제 ---------- */
+const R=(a,b)=>a+Math.random()*(b-a);
+function toDMS(t,sd){let s=rnd(t*3600,sd);let d=Math.floor(s/3600);s-=d*3600;let m=Math.floor(s/60);s=rnd(s-m*60,sd);
+  if(s>=60){s-=60;m++;}if(m>=60){m-=60;d++;}return {d,m,s:s.toFixed(sd).padStart(3+sd,"0")};}
+function obsFrom(dx,dy,sd){let t=Math.atan2(dy,dx)*180/Math.PI;if(t<0)t+=360;const a=toDMS(t,sd);return {...a,L:rnd(Math.hypot(dx,dy),2)};}
+function randomProblem(M){
+  for(let tries=0;tries<200;tries++){
+    const k=M===600?0.5:1;
+    const fxv=rnd(R(446000,455000),2),fyv=rnd(R(190500,196500),2);
+    const sx=rnd(fxv+R(-80,-60)*k,2),sy=rnd(fyv+R(55,70)*k,2);
+    const tx=rnd(fxv+R(-130,-110)*k,2),ty=rnd(fyv+R(-70,-50)*k,2);
+    const base=[[5,110],[-15,205],[-95,165],[-70,35]];
+    const obs=base.map(([a,b])=>obsFrom((a+R(-7,7))*k,(b+R(-8,8))*k,2));
+    const s1=obsFrom((25+R(-10,10))*k,(165+R(-10,10))*k,1),s2=obsFrom((-110+R(-10,10))*k,(95+R(-10,10))*k,1);
+    const no=Math.floor(R(1000,9000));
+    const lot=String(Math.floor(R(100,2999))),last=`${lot}-${Math.floor(R(1,9))}`;
+    const p={title:`랜덤 문제 (1/${M})`,M,X0:500000,Y0:200000,refs:[{name:String(no),x:fxv,y:fyv},{name:String(no+1),x:sx,y:sy},{name:String(no+2),x:tx,y:ty}],frame:0,st:1,
+      obs,spl:[s1,s2],F:1,addr:"○○시 ○○구 ○○동",lot,last,jimok:"대",sheet:`제${Math.floor(R(1,20))}호`,zone:"주거지역",side:"left"};
+    const t=solve(p);if(!t.ok)continue;
+    const S=t.S,minA=Math.min(t.aO,t.aN);if(minA<S*0.3)continue;
+    const tol=0.026*0.026*M*Math.sqrt(S);
+    p.F=rnd(S+R(-0.12,0.12)*tol,M===600?1:0);
+    return p;
+  }
+  return normalize(PRESETS.s2);
+}
+
+/* ---------- 상태 ---------- */
+let P=null,SOL=null;
+const store={get(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+function load(key){
+  if(key==="rand1200")P=randomProblem(1200);
+  else if(key==="rand600")P=randomProblem(600);
+  else P={...normalize(PRESETS[key]),side:"left"};
+  P.key=key;
+  SOL=solve(P);
+  render();
+}
+
+/* ---------- 화면 ---------- */
+const $=s=>document.querySelector(s);
+function renderProblem(){
+  const p=P,st=p.refs[p.st];
+  const refRows=p.refs.map(r=>`<tr><td>${r.name}</td><td>${r.x.toFixed(2)}</td><td>${r.y.toFixed(2)}</td><td></td></tr>`).join("");
+  const obsRows=p.obs.map((o,i)=>`<tr><td>${i===0?st.name:""}</td><td>${i+1}</td><td>${ang(o)}</td><td>${(+o.L).toFixed(2)}</td><td></td></tr>`).join("");
+  const splRows=p.spl.map((o,i)=>`<tr><td>${i===0?st.name:""}</td><td>분 ${i+1}</td><td>${ang(o)}</td><td>${(+o.L).toFixed(2)}</td><td></td></tr>`).join("");
+  const Ftxt=p.M===600?(+p.F).toFixed(1):String(p.F);
+  $("#problem").innerHTML=`
+  <h2><span class="n">문</span>${p.title}</h2>
+  <div class="hint">자격종목 지적기능사 · 과제명 지적제도 및 면적측정 · 시험시간 2시간 30분</div>
+  <div class="req">가. 주어진 지적기준점 "${p.refs[p.frame].name}"을 이용하여 도곽선 좌표를 계산하고, 도곽을 구획하여 지적기준점을 규정에 맞게 전개 및 제도하시오. (단, 축척 ${p.M}분의 1이며, 원점의 가산수치는 X=${p.X0} m, Y=${p.Y0} m이다.)</div>
+  <div class="tbl"><table><tr><th>지적기준점</th><th>X [m]</th><th>Y [m]</th><th>비고</th></tr>${refRows}</table></div>
+  <div class="req">나. 지적기준점에서 관측된 경계점의 좌표를 계산하고, 경계점 순서대로 제도하여 필지를 완성하시오. (단, 좌표결정은 m 단위로 소수 둘째 자리까지 구하시오.)</div>
+  <div class="tbl"><table><tr><th>측점</th><th>경계점</th><th>방위각</th><th>거리[m]</th><th>비고</th></tr>${obsRows}</table></div>
+  <div class="req">다. 주어진 관측점 분 1과 분 2의 방위각과 거리를 이용하여 관측점의 좌표를 계산하고, '요구사항 나)'에서 작성된 필지와 교차하는 지점을 최종 분할점으로 결정하여 분할필지를 완성하시오. (단, 관측점과 최종 분할점은 m 단위로 소수 둘째 자리까지 구하시오.)</div>
+  <div class="tbl"><table><tr><th>측점</th><th>관측점</th><th>방위각</th><th>거리[m]</th><th>비고</th></tr>${splRows}</table></div>
+  <div class="req">라. 완성된 필지를 대상으로 원면적이 ${Ftxt} ㎡인 ${p.addr} ${p.lot}(지목: ${p.jimok})를 계산된 분할선을 이용하여 2필지로 분할하고, 면적측정부를 작성하시오. (단, 분할필지의 ${p.side==="right"?"우측":"좌측"}을 원지번으로 부여하고, 당해 지번의 최종 부번은 "${p.last}"이다.)</div>
+  <div class="req">마. 최종 지적측량결과도(색인도, 제명, 축척, 기준점, 도곽선, 필지경계선, 분할선, 지번, 지목, 도곽선 수치 등)를 작성하시오. (단, 당해 지적도는 ${p.sheet}이고 용도지역은 ${p.zone}이다.)</div>
+  ${SOL.ok?"":`<div class="err">${SOL.msg}</div>`}`;
+}
+
+function fld(id,label,mode){return `<div class="f" data-k="${id}"><label for="a_${id}">${label}</label><input id="a_${id}" inputmode="${mode||"decimal"}" autocomplete="off"><div class="fb"></div></div>`;}
+function renderAnswer(){
+  const p=P,u=UNIT(p.M);
+  let h=`<h3>01 도곽선 좌표 (m)</h3><div class="grid">${fld("top","① 종선 상부좌표")}${fld("bot","② 종선 하부좌표")}${fld("right","③ 횡선 우측좌표")}${fld("left","④ 횡선 좌측좌표")}</div>`;
+  h+=`<h3>02 경계점 좌표 (m)</h3><div class="grid">`;
+  p.obs.forEach((o,i)=>{h+=fld(`p${i}x`,`${i+1}번 X좌표`)+fld(`p${i}y`,`${i+1}번 Y좌표`);});
+  h+=`</div><h3>03 관측점·최종 분할점 (m)</h3><div class="grid">${fld("s0x","분1 X좌표")}${fld("s0y","분1 Y좌표")}${fld("s1x","분2 X좌표")}${fld("s1y","분2 Y좌표")}${fld("i0x","분할점 ㉮ X")}${fld("i0y","분할점 ㉮ Y")}${fld("i1x","분할점 ㉯ X")}${fld("i1y","분할점 ㉯ Y")}</div>
+  <div class="hint">분할점 ㉮·㉯는 순서가 바뀌어도 맞게 채점합니다.</div>`;
+  const nl=SOL.ok?SOL.newLot:"신규";
+  h+=`<h3>04 면적측정부 (㎡)</h3><div class="grid">${fld("tol","허용면적(공차) ±")}${fld("aO",`측정면적 ${p.lot}`)}${fld("aN",`측정면적 ${nl}`)}${fld("err","오차 (원면적−합계)","text")}${fld("rO",`산출면적 ${p.lot}`)}${fld("rN",`산출면적 ${nl}`)}${fld("dO",`결정면적 ${p.lot}`)}${fld("dN",`결정면적 ${nl}`)}</div>
+  <div class="hint">측정면적은 CAD 값 기준 ±0.3 ㎡, 산출면적은 ±0.05 ㎡까지 맞게 봅니다. 결정면적은 ${u===1?"1 ㎡":"0.1 ㎡"} 단위로 정확히 맞아야 합니다.</div>`;
+  $("#answerForm").innerHTML=h;
+  const saved=store.get("ans_"+keyOf());
+  if(saved)Object.entries(saved).forEach(([k,v])=>{const el=$("#a_"+k);if(el)el.value=v;});
+  document.querySelectorAll("#answerForm input").forEach(el=>el.addEventListener("input",()=>{saveAns();const f=el.closest(".f");f.classList.remove("ok","no");f.querySelector(".fb").textContent="";}));
+  $("#scoreBox").innerHTML="";
+}
+function keyOf(){return P.key+"_"+P.refs[0].x+"_"+P.F;}
+function saveAns(){const o={};document.querySelectorAll("#answerForm input").forEach(el=>{if(el.value)o[el.id.slice(2)]=el.value;});store.set("ans_"+keyOf(),o);}
+
+function expected(){
+  const s=SOL,e={top:[s.top,0.5,0],bot:[s.bot,0.5,0],right:[s.right,0.5,0],left:[s.left,0.5,0]};
+  s.pts.forEach((q,i)=>{e[`p${i}x`]=[q.x,0.011,2];e[`p${i}y`]=[q.y,0.011,2];});
+  s.sp.forEach((q,i)=>{e[`s${i}x`]=[q.x,0.011,2];e[`s${i}y`]=[q.y,0.011,2];});
+  e.tol=[s.tolR,0.15,1];e.aO=[s.aO,0.31,1];e.aN=[s.aN,0.31,1];e.err=[s.err,0.31,1];
+  e.rO=[s.rO,0.051,2];e.rN=[s.rN,0.051,2];
+  const dd=s.u===1?0:1;e.dO=[s.dO,s.u/2-1e-6,dd];e.dN=[s.dN,s.u/2-1e-6,dd];
+  return e;
+}
+function mark(k,ok,text){const f=document.querySelector(`.f[data-k="${k}"]`);if(!f)return;f.classList.remove("ok","no");f.classList.add(ok?"ok":"no");f.querySelector(".fb").textContent=text;}
+function grade(){
+  if(!SOL.ok){$("#scoreBox").innerHTML=`<div class="err">${SOL.msg}</div>`;return;}
+  const e=expected();let total=0,good=0,blank=0;
+  for(const [k,[v,tol,d]] of Object.entries(e)){
+    const raw=$("#a_"+k).value;const x=parseNum(raw);total++;
+    if(isNaN(x)){blank++;mark(k,false,`빈칸 · 정답 ${neg(v.toFixed(d))}`);continue;}
+    const ok=Math.abs(x-v)<=tol;if(ok)good++;
+    mark(k,ok,ok?"정답":`정답 ${neg(v.toFixed(d))}`);
+  }
+  // 분할점: 순서 무관
+  const I=SOL.ints,ui=[0,1].map(i=>({x:parseNum($(`#a_i${i}x`).value),y:parseNum($(`#a_i${i}y`).value)}));
+  const near=(a,b)=>Math.abs(a.x-b.x)<=0.011&&Math.abs(a.y-b.y)<=0.011;
+  const straight=near(ui[0],I[0])&&near(ui[1],I[1]),swapped=near(ui[0],I[1])&&near(ui[1],I[0]);
+  const pair=swapped&&!straight?[I[1],I[0]]:[I[0],I[1]];
+  [0,1].forEach(i=>{["x","y"].forEach(c=>{total++;const k=`i${i}${c}`;const x=parseNum($("#a_"+k).value);const v=pair[i][c];
+    if(isNaN(x)){blank++;mark(k,false,`빈칸 · 정답 ${v.toFixed(2)}`);return;}
+    const ok=Math.abs(x-v)<=0.011;if(ok)good++;mark(k,ok,ok?"정답":`정답 ${v.toFixed(2)}`);});});
+  const pct=Math.round(good/total*100);
+  $("#scoreBox").innerHTML=`<div class="score">${good} / ${total} 칸 정답 <small>(${pct}%${blank?` · 빈칸 ${blank}개`:""})</small></div>
+  <div class="hint">틀린 칸 아래에 정답이 나옵니다. 풀이 과정은 아래 "정답·풀이 보기"에서 확인하세요.</div>`;
+}
+
+function renderSolution(){
+  const s=SOL,p=P;
+  if(!s.ok){$("#solution").innerHTML=`<div class="err">${s.msg}</div>`;return;}
+  const fr=s.fr,st=s.st,fX=s.fX,fY=s.fY;
+  const dl=(v)=>neg(v.toFixed(2));
+  const step=(t,proc,ans)=>`<h3>${t}</h3><div class="step"><div class="proc">${proc}</div><div class="ans">${ans}</div></div>`;
+  let h=`<h2><span class="n">풀</span>정답 및 풀이</h2><div class="legend">파란 칸은 풀이과정, 초록 칸은 정답입니다.</div>`;
+  const fxNear=fX.neg?"상부":"하부",fxFar=fX.neg?"하부":"상부",fyNear=fY.neg?"우측":"좌측",fyFar=fY.neg?"좌측":"우측";
+  h+=step("01 도곽선 (도곽 "+s.H+" m × "+s.W+" m)",
+   `<div>종선: ${fr.x.toFixed(2)} − ${p.X0} = ${dl(fX.diff)}</div>
+    <div>${dl(fX.diff)} ÷ ${s.H} = ${neg(fX.q.toFixed(2))} → 소수 버림 ${neg(fX.t)}</div>
+    <div>${neg(fX.t)} × ${s.H} = ${neg(fX.t*s.H)} → ${neg(fX.t*s.H)} + ${p.X0} = <b>${fX.near}</b> (종선 ${fxNear})</div>
+    <div>종선 ${fxFar}: ${fX.near} ${fX.neg?"−":"+"} ${s.H} = <b>${fX.far}</b></div>
+    <div style="margin-top:6px">횡선: ${fr.y.toFixed(2)} − ${p.Y0} = ${dl(fY.diff)}</div>
+    <div>${dl(fY.diff)} ÷ ${s.W} = ${neg(fY.q.toFixed(2))} → 소수 버림 ${neg(fY.t)}</div>
+    <div>${neg(fY.t)} × ${s.W} = ${neg(fY.t*s.W)} → ${neg(fY.t*s.W)} + ${p.Y0} = <b>${fY.near}</b> (횡선 ${fyNear})</div>
+    <div>횡선 ${fyFar}: ${fY.near} ${fY.neg?"−":"+"} ${s.W} = <b>${fY.far}</b></div>`,
+   `종선 상부 ${s.top} m · 하부 ${s.bot} m<br>횡선 우측 ${s.right} m · 좌측 ${s.left} m`);
+  let proc2=`<div>측점 ${st.name} (X ${st.x.toFixed(2)}, Y ${st.y.toFixed(2)}) 기준 · X = X측점 + L cos V, Y = Y측점 + L sin V</div>`;
+  s.pts.forEach((q,i)=>{const o=p.obs[i];proc2+=`<div style="margin-top:6px"><b>${i+1}번</b> (${ang(o)}, ${(+o.L).toFixed(2)} m)</div>
+    <div>ΔX = ${(+o.L).toFixed(2)} × cos(${ang(o)}) = ${(+o.L).toFixed(2)} × ${neg(q.c.toFixed(6))} = ${sgn(q.dx,2)}</div>
+    <div>ΔY = ${(+o.L).toFixed(2)} × sin(${ang(o)}) = ${(+o.L).toFixed(2)} × ${neg(q.s.toFixed(6))} = ${sgn(q.dy,2)}</div>
+    <div>X = ${st.x.toFixed(2)} ${q.dxr>=0?"+":"−"} ${Math.abs(q.dxr).toFixed(2)} = ${q.x.toFixed(2)} · Y = ${st.y.toFixed(2)} ${q.dyr>=0?"+":"−"} ${Math.abs(q.dyr).toFixed(2)} = ${q.y.toFixed(2)}</div>`;});
+  h+=step("02 경계점",proc2,s.pts.map((q,i)=>`${i+1}번 (${q.x.toFixed(2)}, ${q.y.toFixed(2)})`).join("<br>"));
+  let proc3="";
+  s.sp.forEach((q,i)=>{const o=p.spl[i];proc3+=`<div${i?' style="margin-top:6px"':""}><b>분${i+1}</b> (${ang(o)}, ${(+o.L).toFixed(2)} m)</div>
+    <div>ΔX = ${(+o.L).toFixed(2)} × ${neg(q.c.toFixed(6))} = ${sgn(q.dx,2)} · ΔY = ${(+o.L).toFixed(2)} × ${neg(q.s.toFixed(6))} = ${sgn(q.dy,2)}</div>
+    <div>X = ${q.x.toFixed(2)} · Y = ${q.y.toFixed(2)}</div>`;});
+  const lab=["㉮","㉯"];
+  proc3+=`<div style="margin-top:6px">직선 분1–분2를 연장해 경계와 만나는 점을 CAD로 독취: ㉮는 경계 ${s.ints[0].edge+1}–${(s.ints[0].edge+1)%s.pts.length+1}, ㉯는 경계 ${s.ints[1].edge+1}–${(s.ints[1].edge+1)%s.pts.length+1} 위</div>`;
+  h+=step("03 관측점·최종 분할점",proc3,
+    `분1 (${s.sp[0].x.toFixed(2)}, ${s.sp[0].y.toFixed(2)}) · 분2 (${s.sp[1].x.toFixed(2)}, ${s.sp[1].y.toFixed(2)})<br>`+
+    s.ints.map((q,i)=>`분할점 ${lab[i]} (${q.x.toFixed(2)}, ${q.y.toFixed(2)})`).join(" · "));
+  const u=s.u,ud=u===1?0:1,Ft=p.M===600?s.F.toFixed(1):String(s.F);
+  const decTxt=(i)=>{const it=s.dec.items[i];return `${it.r.toFixed(2)} → ${u===1?"소수 첫째 자리":"소수 둘째 자리"} 숫자 ${it.nextDigit}${s.dec.up.has(i)?" → 올림":" → 버림"}`;};
+  h+=step("04 면적측정부",
+   `<div>① 허용면적 A = ±0.026² × M × √F = ±0.026² × ${p.M} × √${Ft} = ±${s.tol.toFixed(2)} → <b>±${s.tolR.toFixed(1)} ㎡</b></div>
+    <div>측정면적(좌표면적계산): ${p.lot} ${s.aO.toFixed(1)} + ${s.newLot} ${s.aN.toFixed(1)} = ${s.S.toFixed(1)} ㎡</div>
+    <div>오차 = 원면적 − 측정면적 합계 = ${Ft} − ${s.S.toFixed(1)} = ${sgn(s.err,1)} ㎡ → ${s.pass?"허용범위 이내 (적합)":"허용범위 초과 (부적합)"}</div>
+    <div style="margin-top:6px">② 산출면적 = 측정면적 × 원면적 ÷ 측정면적 합계</div>
+    <div>${p.lot}: ${s.aO.toFixed(1)} × ${Ft} ÷ ${s.S.toFixed(1)} = ${s.rO.toFixed(2)}</div>
+    <div>${s.newLot}: ${s.aN.toFixed(1)} × ${Ft} ÷ ${s.S.toFixed(1)} = ${s.rN.toFixed(2)}</div>
+    <div style="margin-top:6px">③ 결정면적 (${u===1?"1 ㎡":"0.1 ㎡"} 단위): 합이 원면적과 같도록, 구하려는 끝자리 <b>다음 숫자가 큰 것부터</b> 올림</div>
+    <div>${p.lot}: ${decTxt(0)} · ${s.newLot}: ${decTxt(1)}</div>`,
+   `공차 ±${s.tolR.toFixed(1)} ㎡ · 오차 ${sgn(s.err,1)} ㎡ (${s.pass?"적합":"부적합"})<br>
+    ${p.lot} 산출 ${s.rO.toFixed(2)} → 결정 <b>${s.dO.toFixed(ud)} ㎡</b><br>
+    ${s.newLot} 산출 ${s.rN.toFixed(2)} → 결정 <b>${s.dN.toFixed(ud)} ㎡</b> (합계 ${Ft} ㎡)`);
+  h+=`<div class="note">결정면적: 분할할 때는 "끝자리 다음 숫자가 큰 필지부터 올려서 합을 원면적에 맞추고, 같으면 산출면적이 큰 쪽을 올린다"(공간정보관리법 시행령 제19조). 측정면적은 좌표로 계산한 값이라 CAD 실측과 0.1 ㎡ 정도 다를 수 있습니다.</div>`;
+  h+=`<h3>도면 확인</h3>${drawSVG()}`;
+  $("#solution").innerHTML=h;
+}
+
+function drawSVG(){
+  const s=SOL,p=P;const all=[...s.pts,...s.sp,s.st];
+  const xs=all.map(q=>q.y),ys=all.map(q=>q.x);
+  const minE=Math.min(...xs),maxE=Math.max(...xs),minN=Math.min(...ys),maxN=Math.max(...ys);
+  const Wd=600,Ht=420,pad=40;const sc=Math.min((Wd-2*pad)/(maxE-minE||1),(Ht-2*pad)/(maxN-minN||1));
+  const X=q=>pad+(q.y-minE)*sc,Y=q=>Ht-pad-(q.x-minN)*sc;
+  const poly=pp=>pp.map(q=>`${X(q).toFixed(1)},${Y(q).toFixed(1)}`).join(" ");
+  let g=`<polygon points="${poly(s.origPoly)}" fill="var(--teal-bg)" stroke="var(--ink)" stroke-width="1.5"/>`;
+  g+=`<polygon points="${poly(s.newPoly)}" fill="var(--yel-bg)" stroke="var(--ink)" stroke-width="1.5"/>`;
+  g+=`<line x1="${X(s.sp[0])}" y1="${Y(s.sp[0])}" x2="${X(s.sp[1])}" y2="${Y(s.sp[1])}" stroke="var(--red)" stroke-dasharray="5 4" stroke-width="1.5"/>`;
+  g+=`<line x1="${X(s.ints[0])}" y1="${Y(s.ints[0])}" x2="${X(s.ints[1])}" y2="${Y(s.ints[1])}" stroke="var(--red)" stroke-width="3"/>`;
+  s.pts.forEach((q,i)=>{g+=`<circle cx="${X(q)}" cy="${Y(q)}" r="4" fill="var(--ink)"/><text x="${X(q)+6}" y="${Y(q)-6}" font-size="14" font-weight="700" fill="var(--ink)">${i+1}</text>`;});
+  s.sp.forEach((q,i)=>{g+=`<circle cx="${X(q)}" cy="${Y(q)}" r="3.5" fill="var(--red)"/><text x="${X(q)+6}" y="${Y(q)+14}" font-size="13" fill="var(--red)">분${i+1}</text>`;});
+  ["㉮","㉯"].forEach((l,i)=>{const q=s.ints[i];g+=`<circle cx="${X(q)}" cy="${Y(q)}" r="4" fill="var(--red)"/><text x="${X(q)-18}" y="${Y(q)-6}" font-size="14" font-weight="700" fill="var(--red)">${l}</text>`;});
+  g+=`<circle cx="${X(s.st)}" cy="${Y(s.st)}" r="5" fill="none" stroke="var(--blue)" stroke-width="2"/><text x="${X(s.st)+8}" y="${Y(s.st)+4}" font-size="13" fill="var(--blue)">${s.st.name}</text>`;
+  const cen=pp=>{const n=pp.length;return {x:pp.reduce((a,q)=>a+q.x,0)/n,y:pp.reduce((a,q)=>a+q.y,0)/n};};
+  const c1=cen(s.origPoly),c2=cen(s.newPoly);const ud=s.u===1?0:1;
+  g+=`<text x="${X(c1)}" y="${Y(c1)}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">${p.lot}${p.jimok}</text><text x="${X(c1)}" y="${Y(c1)+17}" text-anchor="middle" font-size="12" fill="var(--sub)">${s.dO.toFixed(ud)}㎡</text>`;
+  g+=`<text x="${X(c2)}" y="${Y(c2)}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)">${s.newLot}${p.jimok}</text><text x="${X(c2)}" y="${Y(c2)+17}" text-anchor="middle" font-size="12" fill="var(--sub)">${s.dN.toFixed(ud)}㎡</text>`;
+  g+=`<g transform="translate(${Wd-26},34)"><line x1="0" y1="18" x2="0" y2="-12" stroke="var(--ink)" stroke-width="2"/><polygon points="-5,-8 0,-18 5,-8" fill="var(--ink)"/><text x="0" y="32" text-anchor="middle" font-size="12" fill="var(--ink)">N(X)</text></g>`;
+  return `<svg viewBox="0 0 ${Wd} ${Ht}" width="100%" role="img" aria-label="필지와 분할선 그림" style="background:var(--card);border:1px solid var(--line);border-radius:10px">${g}</svg>
+  <div class="legend">초록 = 원지번 필지 · 노랑 = 신규 지번 필지 · 붉은 실선 = 분할선 · 위쪽이 북쪽(X), 오른쪽이 동쪽(Y)</div>`;
+}
+
+function renderEdit(){
+  const p=P;
+  const inp=(id,v,w)=>`<input id="e_${id}" value="${v}" ${w?`style="max-width:${w}"`:""}>`;
+  let h=`<div class="grid">
+    <div><div class="lbl">축척</div><select id="e_M">${[500,600,1000,1200,2400].map(m=>`<option ${m===p.M?"selected":""} value="${m}">1/${m}</option>`).join("")}</select></div>
+    <div><div class="lbl">원면적 (㎡)</div>${inp("F",p.F)}</div>
+    <div><div class="lbl">지번</div>${inp("lot",p.lot)}</div>
+    <div><div class="lbl">최종 부번</div>${inp("last",p.last)}</div>
+    <div><div class="lbl">원지번 위치</div><select id="e_side"><option value="left" ${p.side!=="right"?"selected":""}>좌측(서쪽)</option><option value="right" ${p.side==="right"?"selected":""}>우측(동쪽)</option></select></div>
+    <div><div class="lbl">지목</div>${inp("jimok",p.jimok)}</div></div>
+    <h3>지적기준점 (첫 줄 = 도곽 계산점, 둘째 줄 = 관측 측점)</h3>`;
+  p.refs.forEach((r,i)=>{h+=`<div class="row"><div><div class="lbl">점명</div>${inp(`r${i}n`,r.name)}</div><div><div class="lbl">X</div>${inp(`r${i}x`,r.x.toFixed(2))}</div><div><div class="lbl">Y</div>${inp(`r${i}y`,r.y.toFixed(2))}</div></div>`;});
+  h+=`<h3>경계점 관측 (도 · 분 · 초 · 거리)</h3>`;
+  p.obs.forEach((o,i)=>{h+=`<div class="row"><div><div class="lbl">${i+1}번 도</div>${inp(`o${i}d`,o.d)}</div><div><div class="lbl">분</div>${inp(`o${i}m`,o.m)}</div><div><div class="lbl">초</div>${inp(`o${i}s`,o.s)}</div><div><div class="lbl">거리</div>${inp(`o${i}L`,(+o.L).toFixed(2))}</div></div>`;});
+  h+=`<h3>분할 관측점</h3>`;
+  p.spl.forEach((o,i)=>{h+=`<div class="row"><div><div class="lbl">분${i+1} 도</div>${inp(`q${i}d`,o.d)}</div><div><div class="lbl">분</div>${inp(`q${i}m`,o.m)}</div><div><div class="lbl">초</div>${inp(`q${i}s`,o.s)}</div><div><div class="lbl">거리</div>${inp(`q${i}L`,(+o.L).toFixed(2))}</div></div>`;});
+  $("#editForm").innerHTML=h;
+}
+function applyEdit(){
+  const v=id=>$("#e_"+id).value.trim();
+  const p={...P,title:"직접 입력한 문제",key:"custom",M:+v("M"),F:parseNum(v("F")),lot:v("lot"),last:v("last"),side:v("side"),jimok:v("jimok")};
+  p.refs=P.refs.map((r,i)=>({name:v(`r${i}n`),x:parseNum(v(`r${i}x`)),y:parseNum(v(`r${i}y`))}));
+  p.obs=P.obs.map((o,i)=>({d:+v(`o${i}d`),m:+v(`o${i}m`),s:v(`o${i}s`),L:parseNum(v(`o${i}L`))}));
+  p.spl=P.spl.map((o,i)=>({d:+v(`q${i}d`),m:+v(`q${i}m`),s:v(`q${i}s`),L:parseNum(v(`q${i}L`))}));
+  P=p;SOL=solve(P);render();
+}
+
+function render(){
+  renderProblem();renderAnswer();renderEdit();renderSolution();
+  $("#solution").classList.remove("show");$("#btnSol").textContent="정답·풀이 보기";
+}
+
+$("#preset").addEventListener("change",e=>load(e.target.value));
+$("#btnNew").addEventListener("click",()=>{const m=P&&P.M===600?"rand600":"rand1200";$("#preset").value=m;load(m);window.scrollTo({top:0,behavior:"smooth"});});
+$("#btnGrade").addEventListener("click",()=>{grade();$("#answerCard").scrollIntoView({behavior:"smooth"});});
+$("#btnSol").addEventListener("click",()=>{const el=$("#solution");el.classList.toggle("show");const on=el.classList.contains("show");$("#btnSol").textContent=on?"풀이 숨기기":"정답·풀이 보기";if(on)el.scrollIntoView({behavior:"smooth"});});
+$("#btnClear").addEventListener("click",()=>{document.querySelectorAll("#answerForm input").forEach(el=>{el.value="";const f=el.closest(".f");f.classList.remove("ok","no");f.querySelector(".fb").textContent="";});saveAns();$("#scoreBox").innerHTML="";});
+$("#btnApply").addEventListener("click",()=>{applyEdit();$("#editBox").open=false;window.scrollTo({top:0,behavior:"smooth"});});
+
+load("official");
+</script>
+
+</body>
+</html>
