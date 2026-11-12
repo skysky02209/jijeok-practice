@@ -3,10 +3,10 @@
 cd "$(dirname "$0")"
 USER_NAME=skysky02209
 REPO=jijeok-practice
-URL="https://$USER_NAME.github.io/$REPO/"
+URL="https://$USER_NAME.github.io/$REPO/cad/"
 echo "== 지적기능사 실기 연습기 배포 =="
 [ -d .git ] || git init -q -b main
-git add index.html deploy.command
+git add index.html deploy.command cad
 git commit -q -m "배포 $(date '+%Y-%m-%d %H:%M')" || echo "(변경 사항 없음)"
 if command -v gh >/dev/null 2>&1; then
   gh repo view "$USER_NAME/$REPO" >/dev/null 2>&1 || gh repo create "$USER_NAME/$REPO" --public --description "지적기능사 실기 연습기"
